@@ -1,0 +1,1280 @@
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .button {
+      /* Green */
+      border: none;
+      color: white;
+      padding: 10px 24px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 2px;
+      position: absolute;
+      top: 10px;
+      font-size: 13px;
+
+
+    }
+
+
+    #zoom-btn {
+      right: 290px;
+      background-color: #008953;
+    }
+
+    #one-route-btn {
+      right: 165px;
+      color: black;
+      background-color: #f1c40f;
+    }
+
+    #multi-route-btn {
+      right: 10px;
+      background-color: #008CBA;
+    }
+  </style>
+
+  <script src="//unpkg.com/three"></script>
+
+  <script src="//unpkg.com/3d-force-graph"></script>
+</head>
+
+<body>
+  <div id="3d-graph"></div>
+  <button class="button" id="zoom-btn">Zoom</button>
+  <button class="button" id="one-route-btn">Rota única</button>
+  <button class="button" id="multi-route-btn">Rotas Variáveis</button>
+
+  <script>
+    // Random tree
+    gData = {
+      'nodes': [{ 'id': '106.189.238.239', 'group': 1 },
+      { 'id': 'c295:9368:8d7a:97cc:a855:b941:a2d1:4af1', 'group': 1 },
+      { 'id': '153.230.200.23', 'group': 1 },
+      { 'id': '933c:c2c7:a78a:25da:23a4:164a:41ea:e059', 'group': 1 },
+      { 'id': '83.231.102.238', 'group': 1 },
+      { 'id': '29.230.149.204', 'group': 1 },
+      { 'id': '159.219.129.105', 'group': 1 },
+      { 'id': '48be:9890:da9f:4546:8600:3bbd:3464:a4d6', 'group': 1 },
+      { 'id': 'c0f9:8dc2:365:ddc4:33fa:dd79:cabd:877d', 'group': 1 },
+      { 'id': '147.174.12.198', 'group': 2 },
+      { 'id': '87.46.212.38', 'group': 2 },
+      { 'id': '5da7:a2f1:ed5d:c373:61d8:d153:bb71:4437', 'group': 3 },
+      { 'id': 'd56d:a186:ba13:ca52:9bba:3d9c:b939:626a', 'group': 2 },
+      { 'id': '5004:74c4:35d1:f3f4:d7a9:c5ee:61f0:5f79', 'group': 2 },
+      { 'id': '204.16.108.84', 'group': 2 },
+      { 'id': '90.179.172.142', 'group': 3 },
+      { 'id': '85.130.233.239', 'group': 3 },
+      { 'id': '5587:e3c5:5715:32b3:3839:db4e:a0b0:dea7', 'group': 3 },
+      { 'id': '195.100.45.95', 'group': 3 },
+      { 'id': '52.0.71.103', 'group': 3 },
+      { 'id': '48.74.241.150', 'group': 3 },
+      { 'id': '49.140.171.47', 'group': 3 },
+      { 'id': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285', 'group': 3 },
+      { 'id': '57.90.76.46', 'group': 4 },
+      { 'id': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2', 'group': 4 },
+      { 'id': '216.156.116.202', 'group': 5 },
+      { 'id': '211f:319a:e3f2:20bd:a042:394:72a8:583d', 'group': 4 },
+      { 'id': '2370:539b:ee4a:4b62:48de:92e:cc22:ccb5', 'group': 0 },
+      { 'id': '268:416a:c18:f41d:46ab:92da:f256:9b53', 'group': 2 },
+      { 'id': 'f059:1d22:555c:3bf:5c9e:4de:3d2e:80fa', 'group': 3 },
+      { 'id': '135.119.204.102', 'group': 2 },
+      { 'id': '201.206.26.80', 'group': 2 },
+      { 'id': '145.128.227.42', 'group': 2 },
+      { 'id': '3763:524:7cb9:ca3e:f0d3:f407:274f:48f9', 'group': 2 },
+      { 'id': '1b3c:9c49:1776:77c7:555e:4566:3a58:1614', 'group': 2 },
+      { 'id': '123.190.231.189', 'group': 2 },
+      { 'id': '55.66.83.205', 'group': 2 },
+      { 'id': '205.123.207.169', 'group': 2 },
+      { 'id': '203d:a639:1e0e:2ffd:c646:af97:1749:300a', 'group': 4 },
+      { 'id': 'd83e:c1e5:15fc:5f40:45ab:d404:6741:8726', 'group': 6 },
+      { 'id': '6.81.89.25', 'group': 4 },
+      { 'id': '213.83.190.160', 'group': 4 },
+      { 'id': '6a2e:dd95:7915:cd51:eded:413c:b43f:355f', 'group': 5 },
+      { 'id': '192.39.222.54', 'group': 0 },
+      { 'id': '49.86.110.168', 'group': 0 },
+      { 'id': '218.137.224.219', 'group': 7 },
+      { 'id': '107.121.192.93', 'group': 7 },
+      { 'id': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37', 'group': 8 },
+      { 'id': 'bb02:50b3:7705:9fa8:56be:7bef:667c:4de7', 'group': 5 },
+      { 'id': '68.111.207.146', 'group': 5 },
+      { 'id': '8f04:c54:d93c:252:d772:d31c:edf9:62db', 'group': 5 },
+      { 'id': '307c:b228:7523:fcc1:2a4e:9dba:3e50:7e0f', 'group': 5 },
+      { 'id': '440c:4ed5:c1a8:ccc3:5c33:da31:94fc:85b', 'group': 5 },
+      { 'id': '64.124.128.232', 'group': 5 },
+      { 'id': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f', 'group': 8 },
+      { 'id': '51.232.188.215', 'group': 5 },
+      { 'id': '149.14.220.143', 'group': 8 },
+      { 'id': '104.60.214.23', 'group': 8 },
+      { 'id': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158', 'group': 8 },
+      { 'id': '19.217.183.165', 'group': 8 },
+      { 'id': '223.33.99.50', 'group': 8 },
+      { 'id': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738', 'group': 8 },
+      { 'id': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b', 'group': 8 },
+      { 'id': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e', 'group': 8 },
+      { 'id': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca', 'group': 8 },
+      { 'id': '219.79.203.77', 'group': 8 },
+      { 'id': 'google.com(142.250.79.14)', 'group': 9 },
+      { 'id': 'Casa(154.129.34.158)', 'group': 9 },
+      { 'id': '174.122.28.161', 'group': 4 },
+      { 'id': '30.111.86.191', 'group': 4 },
+      { 'id': '51.200.129.195', 'group': 4 },
+      { 'id': '70.207.64.156', 'group': 4 },
+      { 'id': '3f0b:f534:e75e:78e8:1370:d0cd:f681:e29d', 'group': 5 },
+      { 'id': '117d:b17:70f4:98cd:6cb0:8dd:b00c:1552', 'group': 10 },
+      { 'id': 'd693:bf11:7721:1931:9734:2124:e3ed:9637', 'group': 10 },
+      { 'id': '8a8e:d273:ece1:2e8b:5cc:70a2:a492:66c9', 'group': 4 },
+      { 'id': '110.148.60.162', 'group': 8 }],
+      'links': [{
+        'source': 'Casa(154.129.34.158)',
+        'target': '106.189.238.239',
+        'value': 1
+      },
+      {
+        'source': '106.189.238.239',
+        'target': 'c295:9368:8d7a:97cc:a855:b941:a2d1:4af1',
+        'value': 8
+      },
+      {
+        'source': 'c295:9368:8d7a:97cc:a855:b941:a2d1:4af1',
+        'target': '87.46.212.38',
+        'value': 3
+      },
+      {
+        'source': '87.46.212.38',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 1
+      },
+      {
+        'source': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'target': '149.14.220.143',
+        'value': 1
+      },
+      {
+        'source': '149.14.220.143',
+        'target': 'google.com(142.250.79.14)',
+        'value': 3
+      },
+      { 'source': '106.189.238.239', 'target': '153.230.200.23', 'value': 10 },
+      { 'source': '153.230.200.23', 'target': '87.46.212.38', 'value': 3 },
+      { 'source': '106.189.238.239', 'target': '87.46.212.38', 'value': 5 },
+      {
+        'source': '87.46.212.38',
+        'target': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'value': 1
+      },
+      {
+        'source': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'target': '104.60.214.23',
+        'value': 10
+      },
+      { 'source': '104.60.214.23', 'target': '149.14.220.143', 'value': 1 },
+      { 'source': '106.189.238.239', 'target': 'Casa(154.129.34.158)', 'value': 1 },
+      {
+        'source': 'c295:9368:8d7a:97cc:a855:b941:a2d1:4af1',
+        'target': '106.189.238.239',
+        'value': 8
+      },
+      {
+        'source': '87.46.212.38',
+        'target': 'c295:9368:8d7a:97cc:a855:b941:a2d1:4af1',
+        'value': 3
+      },
+      {
+        'source': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'target': '87.46.212.38',
+        'value': 1
+      },
+      {
+        'source': '149.14.220.143',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 1
+      },
+      {
+        'source': 'google.com(142.250.79.14)',
+        'target': '149.14.220.143',
+        'value': 3
+      },
+      { 'source': '153.230.200.23', 'target': '106.189.238.239', 'value': 10 },
+      { 'source': '87.46.212.38', 'target': '153.230.200.23', 'value': 3 },
+      { 'source': '87.46.212.38', 'target': '106.189.238.239', 'value': 5 },
+      {
+        'source': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'target': '87.46.212.38',
+        'value': 1
+      },
+      {
+        'source': '104.60.214.23',
+        'target': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'value': 10
+      },
+      { 'source': '149.14.220.143', 'target': '104.60.214.23', 'value': 1 },
+      {
+        'source': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'target': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'value': 5
+      },
+      {
+        'source': 'c295:9368:8d7a:97cc:a855:b941:a2d1:4af1',
+        'target': '153.230.200.23',
+        'value': 6
+      },
+      {
+        'source': '933c:c2c7:a78a:25da:23a4:164a:41ea:e059',
+        'target': '106.189.238.239',
+        'value': 1
+      },
+      { 'source': '83.231.102.238', 'target': '106.189.238.239', 'value': 1 },
+      { 'source': '29.230.149.204', 'target': '106.189.238.239', 'value': 1 },
+      { 'source': '159.219.129.105', 'target': '106.189.238.239', 'value': 1 },
+      {
+        'source': '48be:9890:da9f:4546:8600:3bbd:3464:a4d6',
+        'target': '106.189.238.239',
+        'value': 2
+      },
+      {
+        'source': 'c0f9:8dc2:365:ddc4:33fa:dd79:cabd:877d',
+        'target': '106.189.238.239',
+        'value': 1
+      },
+      { 'source': '87.46.212.38', 'target': '147.174.12.198', 'value': 1 },
+      { 'source': '87.46.212.38', 'target': '153.230.200.23', 'value': 3 },
+      {
+        'source': '5da7:a2f1:ed5d:c373:61d8:d153:bb71:4437',
+        'target': '87.46.212.38',
+        'value': 1
+      },
+      {
+        'source': 'd56d:a186:ba13:ca52:9bba:3d9c:b939:626a',
+        'target': '87.46.212.38',
+        'value': 1
+      },
+      {
+        'source': '5004:74c4:35d1:f3f4:d7a9:c5ee:61f0:5f79',
+        'target': '87.46.212.38',
+        'value': 1
+      },
+      { 'source': '204.16.108.84', 'target': '87.46.212.38', 'value': 1 },
+      { 'source': '85.130.233.239', 'target': '90.179.172.142', 'value': 4 },
+      {
+        'source': '5587:e3c5:5715:32b3:3839:db4e:a0b0:dea7',
+        'target': '90.179.172.142',
+        'value': 4
+      },
+      {
+        'source': '5587:e3c5:5715:32b3:3839:db4e:a0b0:dea7',
+        'target': '85.130.233.239',
+        'value': 4
+      },
+      { 'source': '195.100.45.95', 'target': '90.179.172.142', 'value': 4 },
+      { 'source': '195.100.45.95', 'target': '85.130.233.239', 'value': 4 },
+      {
+        'source': '195.100.45.95',
+        'target': '5587:e3c5:5715:32b3:3839:db4e:a0b0:dea7',
+        'value': 4
+      },
+      { 'source': '52.0.71.103', 'target': '90.179.172.142', 'value': 3 },
+      { 'source': '52.0.71.103', 'target': '85.130.233.239', 'value': 3 },
+      {
+        'source': '52.0.71.103',
+        'target': '5587:e3c5:5715:32b3:3839:db4e:a0b0:dea7',
+        'value': 3
+      },
+      { 'source': '52.0.71.103', 'target': '195.100.45.95', 'value': 4 },
+      { 'source': '48.74.241.150', 'target': '90.179.172.142', 'value': 3 },
+      { 'source': '48.74.241.150', 'target': '85.130.233.239', 'value': 3 },
+      {
+        'source': '48.74.241.150',
+        'target': '5587:e3c5:5715:32b3:3839:db4e:a0b0:dea7',
+        'value': 3
+      },
+      { 'source': '48.74.241.150', 'target': '195.100.45.95', 'value': 3 },
+      { 'source': '48.74.241.150', 'target': '52.0.71.103', 'value': 5 },
+      { 'source': '49.140.171.47', 'target': '90.179.172.142', 'value': 3 },
+      { 'source': '49.140.171.47', 'target': '85.130.233.239', 'value': 3 },
+      {
+        'source': '49.140.171.47',
+        'target': '5587:e3c5:5715:32b3:3839:db4e:a0b0:dea7',
+        'value': 3
+      },
+      { 'source': '49.140.171.47', 'target': '195.100.45.95', 'value': 3 },
+      { 'source': '49.140.171.47', 'target': '52.0.71.103', 'value': 4 },
+      { 'source': '49.140.171.47', 'target': '48.74.241.150', 'value': 4 },
+      {
+        'source': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'target': '90.179.172.142',
+        'value': 3
+      },
+      {
+        'source': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'target': '85.130.233.239',
+        'value': 3
+      },
+      {
+        'source': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'target': '5587:e3c5:5715:32b3:3839:db4e:a0b0:dea7',
+        'value': 3
+      },
+      {
+        'source': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'target': '195.100.45.95',
+        'value': 3
+      },
+      {
+        'source': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'target': '52.0.71.103',
+        'value': 4
+      },
+      {
+        'source': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'target': '48.74.241.150',
+        'value': 4
+      },
+      {
+        'source': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'target': '49.140.171.47',
+        'value': 4
+      },
+      {
+        'source': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'target': '5da7:a2f1:ed5d:c373:61d8:d153:bb71:4437',
+        'value': 2
+      },
+      {
+        'source': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'target': '87.46.212.38',
+        'value': 2
+      },
+      {
+        'source': '57.90.76.46',
+        'target': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'value': 2
+      },
+      { 'source': '57.90.76.46', 'target': '87.46.212.38', 'value': 7 },
+      {
+        'source': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'target': '57.90.76.46',
+        'value': 13
+      },
+      {
+        'source': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'target': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'value': 1
+      },
+      {
+        'source': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'target': '87.46.212.38',
+        'value': 12
+      },
+      { 'source': '216.156.116.202', 'target': '57.90.76.46', 'value': 4 },
+      { 'source': '216.156.116.202', 'target': '87.46.212.38', 'value': 31 },
+      { 'source': '216.156.116.202', 'target': '90.179.172.142', 'value': 1 },
+      {
+        'source': '216.156.116.202',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 1
+      },
+      {
+        'source': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'target': '87.46.212.38',
+        'value': 17
+      },
+      {
+        'source': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'target': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'value': 5
+      },
+      {
+        'source': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 5
+      },
+      {
+        'source': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'target': '57.90.76.46',
+        'value': 1
+      },
+      {
+        'source': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'target': '216.156.116.202',
+        'value': 1
+      },
+      {
+        'source': '2370:539b:ee4a:4b62:48de:92e:cc22:ccb5',
+        'target': '87.46.212.38',
+        'value': 8
+      },
+      {
+        'source': '2370:539b:ee4a:4b62:48de:92e:cc22:ccb5',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      {
+        'source': '268:416a:c18:f41d:46ab:92da:f256:9b53',
+        'target': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'value': 1
+      },
+      {
+        'source': '268:416a:c18:f41d:46ab:92da:f256:9b53',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      {
+        'source': '268:416a:c18:f41d:46ab:92da:f256:9b53',
+        'target': '87.46.212.38',
+        'value': 2
+      },
+      {
+        'source': 'f059:1d22:555c:3bf:5c9e:4de:3d2e:80fa',
+        'target': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'value': 1
+      },
+      {
+        'source': '135.119.204.102',
+        'target': 'f059:1d22:555c:3bf:5c9e:4de:3d2e:80fa',
+        'value': 2
+      },
+      { 'source': '135.119.204.102', 'target': '87.46.212.38', 'value': 3 },
+      {
+        'source': '135.119.204.102',
+        'target': '26e0:e537:e1de:3de4:481c:3e08:a31a:2285',
+        'value': 2
+      },
+      {
+        'source': '135.119.204.102',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      { 'source': '201.206.26.80', 'target': '87.46.212.38', 'value': 1 },
+      { 'source': '145.128.227.42', 'target': '87.46.212.38', 'value': 2 },
+      {
+        'source': '145.128.227.42',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      {
+        'source': '3763:524:7cb9:ca3e:f0d3:f407:274f:48f9',
+        'target': '87.46.212.38',
+        'value': 3
+      },
+      {
+        'source': '3763:524:7cb9:ca3e:f0d3:f407:274f:48f9',
+        'target': '268:416a:c18:f41d:46ab:92da:f256:9b53',
+        'value': 2
+      },
+      {
+        'source': '1b3c:9c49:1776:77c7:555e:4566:3a58:1614',
+        'target': '87.46.212.38',
+        'value': 3
+      },
+      {
+        'source': '1b3c:9c49:1776:77c7:555e:4566:3a58:1614',
+        'target': '3763:524:7cb9:ca3e:f0d3:f407:274f:48f9',
+        'value': 3
+      },
+      {
+        'source': '1b3c:9c49:1776:77c7:555e:4566:3a58:1614',
+        'target': '268:416a:c18:f41d:46ab:92da:f256:9b53',
+        'value': 2
+      },
+      {
+        'source': '123.190.231.189',
+        'target': '3763:524:7cb9:ca3e:f0d3:f407:274f:48f9',
+        'value': 2
+      },
+      {
+        'source': '123.190.231.189',
+        'target': '1b3c:9c49:1776:77c7:555e:4566:3a58:1614',
+        'value': 2
+      },
+      { 'source': '123.190.231.189', 'target': '87.46.212.38', 'value': 2 },
+      {
+        'source': '123.190.231.189',
+        'target': '268:416a:c18:f41d:46ab:92da:f256:9b53',
+        'value': 1
+      },
+      {
+        'source': '55.66.83.205',
+        'target': '3763:524:7cb9:ca3e:f0d3:f407:274f:48f9',
+        'value': 2
+      },
+      {
+        'source': '55.66.83.205',
+        'target': '1b3c:9c49:1776:77c7:555e:4566:3a58:1614',
+        'value': 2
+      },
+      { 'source': '55.66.83.205', 'target': '123.190.231.189', 'value': 2 },
+      { 'source': '55.66.83.205', 'target': '87.46.212.38', 'value': 2 },
+      {
+        'source': '55.66.83.205',
+        'target': '268:416a:c18:f41d:46ab:92da:f256:9b53',
+        'value': 1
+      },
+      {
+        'source': '205.123.207.169',
+        'target': '3763:524:7cb9:ca3e:f0d3:f407:274f:48f9',
+        'value': 2
+      },
+      {
+        'source': '205.123.207.169',
+        'target': '1b3c:9c49:1776:77c7:555e:4566:3a58:1614',
+        'value': 2
+      },
+      { 'source': '205.123.207.169', 'target': '123.190.231.189', 'value': 2 },
+      { 'source': '205.123.207.169', 'target': '55.66.83.205', 'value': 2 },
+      { 'source': '205.123.207.169', 'target': '87.46.212.38', 'value': 2 },
+      {
+        'source': '205.123.207.169',
+        'target': '268:416a:c18:f41d:46ab:92da:f256:9b53',
+        'value': 1
+      },
+      {
+        'source': '203d:a639:1e0e:2ffd:c646:af97:1749:300a',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 1
+      },
+      {
+        'source': 'd83e:c1e5:15fc:5f40:45ab:d404:6741:8726',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 1
+      },
+      { 'source': '6.81.89.25', 'target': '57.90.76.46', 'value': 2 },
+      {
+        'source': '6.81.89.25',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 3
+      },
+      { 'source': '213.83.190.160', 'target': '6.81.89.25', 'value': 2 },
+      {
+        'source': '213.83.190.160',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 2
+      },
+      { 'source': '213.83.190.160', 'target': '57.90.76.46', 'value': 1 },
+      {
+        'source': '6a2e:dd95:7915:cd51:eded:413c:b43f:355f',
+        'target': '87.46.212.38',
+        'value': 3
+      },
+      {
+        'source': '6a2e:dd95:7915:cd51:eded:413c:b43f:355f',
+        'target': '216.156.116.202',
+        'value': 1
+      },
+      {
+        'source': '6a2e:dd95:7915:cd51:eded:413c:b43f:355f',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      {
+        'source': '192.39.222.54',
+        'target': '2370:539b:ee4a:4b62:48de:92e:cc22:ccb5',
+        'value': 3
+      },
+      { 'source': '192.39.222.54', 'target': '87.46.212.38', 'value': 1 },
+      {
+        'source': '49.86.110.168',
+        'target': '2370:539b:ee4a:4b62:48de:92e:cc22:ccb5',
+        'value': 2
+      },
+      { 'source': '107.121.192.93', 'target': '218.137.224.219', 'value': 1 },
+      {
+        'source': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'target': '107.121.192.93',
+        'value': 2
+      },
+      {
+        'source': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 1
+      },
+      {
+        'source': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      {
+        'source': 'bb02:50b3:7705:9fa8:56be:7bef:667c:4de7',
+        'target': '216.156.116.202',
+        'value': 3
+      },
+      {
+        'source': 'bb02:50b3:7705:9fa8:56be:7bef:667c:4de7',
+        'target': '87.46.212.38',
+        'value': 2
+      },
+      {
+        'source': '68.111.207.146',
+        'target': 'bb02:50b3:7705:9fa8:56be:7bef:667c:4de7',
+        'value': 1
+      },
+      { 'source': '68.111.207.146', 'target': '57.90.76.46', 'value': 1 },
+      {
+        'source': '8f04:c54:d93c:252:d772:d31c:edf9:62db',
+        'target': 'bb02:50b3:7705:9fa8:56be:7bef:667c:4de7',
+        'value': 9
+      },
+      {
+        'source': '8f04:c54:d93c:252:d772:d31c:edf9:62db',
+        'target': '216.156.116.202',
+        'value': 2
+      },
+      {
+        'source': '8f04:c54:d93c:252:d772:d31c:edf9:62db',
+        'target': '87.46.212.38',
+        'value': 2
+      },
+      {
+        'source': '307c:b228:7523:fcc1:2a4e:9dba:3e50:7e0f',
+        'target': '8f04:c54:d93c:252:d772:d31c:edf9:62db',
+        'value': 1
+      },
+      {
+        'source': '307c:b228:7523:fcc1:2a4e:9dba:3e50:7e0f',
+        'target': '203d:a639:1e0e:2ffd:c646:af97:1749:300a',
+        'value': 1
+      },
+      {
+        'source': '440c:4ed5:c1a8:ccc3:5c33:da31:94fc:85b',
+        'target': '8f04:c54:d93c:252:d772:d31c:edf9:62db',
+        'value': 1
+      },
+      {
+        'source': '64.124.128.232',
+        'target': '8f04:c54:d93c:252:d772:d31c:edf9:62db',
+        'value': 2
+      },
+      {
+        'source': '64.124.128.232',
+        'target': 'bb02:50b3:7705:9fa8:56be:7bef:667c:4de7',
+        'value': 1
+      },
+      { 'source': '64.124.128.232', 'target': '216.156.116.202', 'value': 1 },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': '8f04:c54:d93c:252:d772:d31c:edf9:62db',
+        'value': 6
+      },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': 'bb02:50b3:7705:9fa8:56be:7bef:667c:4de7',
+        'value': 12
+      },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': '203d:a639:1e0e:2ffd:c646:af97:1749:300a',
+        'value': 1
+      },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': '64.124.128.232',
+        'value': 1
+      },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': '216.156.116.202',
+        'value': 21
+      },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': '87.46.212.38',
+        'value': 19
+      },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': '90.179.172.142',
+        'value': 1
+      },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 2
+      },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': '6.81.89.25',
+        'value': 5
+      },
+      {
+        'source': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 4
+      },
+      {
+        'source': '51.232.188.215',
+        'target': 'bb02:50b3:7705:9fa8:56be:7bef:667c:4de7',
+        'value': 1
+      },
+      {
+        'source': '51.232.188.215',
+        'target': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'value': 1
+      },
+      {
+        'source': '149.14.220.143',
+        'target': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'value': 1
+      },
+      { 'source': '149.14.220.143', 'target': '6.81.89.25', 'value': 1 },
+      {
+        'source': '104.60.214.23',
+        'target': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'value': 7
+      },
+      {
+        'source': '104.60.214.23',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 7
+      },
+      {
+        'source': '104.60.214.23',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 6
+      },
+      { 'source': '104.60.214.23', 'target': '87.46.212.38', 'value': 4 },
+      {
+        'source': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'target': '104.60.214.23',
+        'value': 15
+      },
+      {
+        'source': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'target': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'value': 5
+      },
+      {
+        'source': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 6
+      },
+      {
+        'source': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'target': '149.14.220.143',
+        'value': 2
+      },
+      {
+        'source': '19.217.183.165',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 1
+      },
+      { 'source': '19.217.183.165', 'target': '104.60.214.23', 'value': 4 },
+      {
+        'source': '19.217.183.165',
+        'target': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'value': 2
+      },
+      {
+        'source': '223.33.99.50',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 2
+      },
+      { 'source': '223.33.99.50', 'target': '104.60.214.23', 'value': 6 },
+      { 'source': '223.33.99.50', 'target': '19.217.183.165', 'value': 2 },
+      {
+        'source': '223.33.99.50',
+        'target': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'value': 5
+      },
+      { 'source': '223.33.99.50', 'target': '149.14.220.143', 'value': 1 },
+      {
+        'source': '223.33.99.50',
+        'target': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'value': 1
+      },
+      {
+        'source': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'target': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'value': 9
+      },
+      {
+        'source': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'target': '104.60.214.23',
+        'value': 17
+      },
+      {
+        'source': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'target': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'value': 13
+      },
+      {
+        'source': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 7
+      },
+      {
+        'source': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'target': '149.14.220.143',
+        'value': 2
+      },
+      {
+        'source': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'target': '6.81.89.25',
+        'value': 1
+      },
+      {
+        'source': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'target': '223.33.99.50',
+        'value': 6
+      },
+      {
+        'source': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'target': '19.217.183.165',
+        'value': 3
+      },
+      {
+        'source': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'target': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'value': 5
+      },
+      {
+        'source': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 5
+      },
+      {
+        'source': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'target': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'value': 6
+      },
+      {
+        'source': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'target': '149.14.220.143',
+        'value': 2
+      },
+      {
+        'source': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'target': '104.60.214.23',
+        'value': 4
+      },
+      {
+        'source': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'target': '223.33.99.50',
+        'value': 3
+      },
+      {
+        'source': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'target': '19.217.183.165',
+        'value': 2
+      },
+      {
+        'source': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'target': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'value': 1
+      },
+      {
+        'source': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'target': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'value': 5
+      },
+      {
+        'source': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'target': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'value': 12
+      },
+      {
+        'source': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'target': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'value': 4
+      },
+      {
+        'source': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'target': '223.33.99.50',
+        'value': 6
+      },
+      {
+        'source': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'target': '19.217.183.165',
+        'value': 2
+      },
+      {
+        'source': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'target': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'value': 9
+      },
+      {
+        'source': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'target': '149.14.220.143',
+        'value': 1
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'value': 5
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'value': 7
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 3
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'value': 5
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': '104.60.214.23',
+        'value': 5
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': '223.33.99.50',
+        'value': 5
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': '19.217.183.165',
+        'value': 2
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'value': 5
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': '149.14.220.143',
+        'value': 1
+      },
+      {
+        'source': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'target': '71bd:78ea:5e32:1e82:f486:97b8:b201:cf6f',
+        'value': 2
+      },
+      {
+        'source': '219.79.203.77',
+        'target': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'value': 3
+      },
+      { 'source': '219.79.203.77', 'target': '104.60.214.23', 'value': 3 },
+      {
+        'source': '219.79.203.77',
+        'target': '6b1:b0ea:29db:292a:4bf6:37b5:9430:7158',
+        'value': 1
+      },
+      {
+        'source': '219.79.203.77',
+        'target': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'value': 2
+      },
+      {
+        'source': '219.79.203.77',
+        'target': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'value': 2
+      },
+      {
+        'source': '219.79.203.77',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 1
+      },
+      {
+        'source': '219.79.203.77',
+        'target': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'value': 1
+      },
+      { 'source': '219.79.203.77', 'target': '223.33.99.50', 'value': 1 },
+      { 'source': '219.79.203.77', 'target': '19.217.183.165', 'value': 1 },
+      {
+        'source': '174.122.28.161',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 5
+      },
+      { 'source': '174.122.28.161', 'target': '87.46.212.38', 'value': 1 },
+      { 'source': '174.122.28.161', 'target': '57.90.76.46', 'value': 1 },
+      {
+        'source': '174.122.28.161',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      {
+        'source': '174.122.28.161',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 1
+      },
+      { 'source': '174.122.28.161', 'target': '6.81.89.25', 'value': 1 },
+      {
+        'source': '30.111.86.191',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 6
+      },
+      { 'source': '30.111.86.191', 'target': '174.122.28.161', 'value': 6 },
+      { 'source': '30.111.86.191', 'target': '87.46.212.38', 'value': 1 },
+      { 'source': '30.111.86.191', 'target': '57.90.76.46', 'value': 1 },
+      {
+        'source': '30.111.86.191',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 2
+      },
+      {
+        'source': '30.111.86.191',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 1
+      },
+      { 'source': '30.111.86.191', 'target': '6.81.89.25', 'value': 1 },
+      {
+        'source': '51.200.129.195',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 4
+      },
+      { 'source': '51.200.129.195', 'target': '30.111.86.191', 'value': 4 },
+      { 'source': '51.200.129.195', 'target': '174.122.28.161', 'value': 4 },
+      { 'source': '51.200.129.195', 'target': '87.46.212.38', 'value': 1 },
+      { 'source': '51.200.129.195', 'target': '57.90.76.46', 'value': 1 },
+      {
+        'source': '51.200.129.195',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      { 'source': '51.200.129.195', 'target': '6.81.89.25', 'value': 1 },
+      { 'source': '51.200.129.195', 'target': '104.60.214.23', 'value': 1 },
+      {
+        'source': '70.207.64.156',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      { 'source': '70.207.64.156', 'target': '30.111.86.191', 'value': 2 },
+      { 'source': '70.207.64.156', 'target': '174.122.28.161', 'value': 2 },
+      { 'source': '70.207.64.156', 'target': '51.200.129.195', 'value': 2 },
+      { 'source': '70.207.64.156', 'target': '87.46.212.38', 'value': 1 },
+      {
+        'source': '70.207.64.156',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 1
+      },
+      { 'source': '70.207.64.156', 'target': '6.81.89.25', 'value': 1 },
+      {
+        'source': '70.207.64.156',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 1
+      },
+      {
+        'source': '3f0b:f534:e75e:78e8:1370:d0cd:f681:e29d',
+        'target': '216.156.116.202',
+        'value': 2
+      },
+      {
+        'source': '3f0b:f534:e75e:78e8:1370:d0cd:f681:e29d',
+        'target': '211f:319a:e3f2:20bd:a042:394:72a8:583d',
+        'value': 1
+      },
+      {
+        'source': '3f0b:f534:e75e:78e8:1370:d0cd:f681:e29d',
+        'target': '87.46.212.38',
+        'value': 1
+      },
+      {
+        'source': '117d:b17:70f4:98cd:6cb0:8dd:b00c:1552',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 2
+      },
+      {
+        'source': 'd693:bf11:7721:1931:9734:2124:e3ed:9637',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 2
+      },
+      {
+        'source': 'd693:bf11:7721:1931:9734:2124:e3ed:9637',
+        'target': '117d:b17:70f4:98cd:6cb0:8dd:b00c:1552',
+        'value': 3
+      },
+      {
+        'source': '8a8e:d273:ece1:2e8b:5cc:70a2:a492:66c9',
+        'target': '30.111.86.191',
+        'value': 3
+      },
+      {
+        'source': '8a8e:d273:ece1:2e8b:5cc:70a2:a492:66c9',
+        'target': '174.122.28.161',
+        'value': 3
+      },
+      {
+        'source': '8a8e:d273:ece1:2e8b:5cc:70a2:a492:66c9',
+        'target': '3ad9:3abe:1ac4:5edb:9be6:a1c8:3882:ff2',
+        'value': 3
+      },
+      {
+        'source': '8a8e:d273:ece1:2e8b:5cc:70a2:a492:66c9',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 1
+      },
+      {
+        'source': '8a8e:d273:ece1:2e8b:5cc:70a2:a492:66c9',
+        'target': '6.81.89.25',
+        'value': 1
+      },
+      {
+        'source': '8a8e:d273:ece1:2e8b:5cc:70a2:a492:66c9',
+        'target': '51.200.129.195',
+        'value': 1
+      },
+      {
+        'source': '8a8e:d273:ece1:2e8b:5cc:70a2:a492:66c9',
+        'target': '70.207.64.156',
+        'value': 1
+      },
+      {
+        'source': '110.148.60.162',
+        'target': 'fc14:e5c1:977d:2260:20bd:be67:468d:c95e',
+        'value': 1
+      },
+      {
+        'source': '110.148.60.162',
+        'target': 'a5f8:be00:160b:d6aa:7246:1d4c:7a67:a0ca',
+        'value': 1
+      },
+      { 'source': '110.148.60.162', 'target': '219.79.203.77', 'value': 1 },
+      {
+        'source': '110.148.60.162',
+        'target': '39a7:1648:6fd4:d110:b7de:ddea:ac26:cf5b',
+        'value': 1
+      },
+      {
+        'source': '110.148.60.162',
+        'target': '7708:2bdc:907:ca13:1511:a3fa:c46e:1738',
+        'value': 1
+      },
+      {
+        'source': '110.148.60.162',
+        'target': '62f8:d20a:c78a:d66d:4a9b:fc01:192e:dd37',
+        'value': 1
+      },
+      { 'source': '110.148.60.162', 'target': '104.60.214.23', 'value': 1 }]
+    }
+
+
+    const Graph = ForceGraph3D()
+      (document.getElementById('3d-graph'))
+      .linkDirectionalParticleWidth(6)
+      .linkDirectionalParticleResolution(10)
+      .linkHoverPrecision(10)
+      .nodeAutoColorBy('group')
+      .nodeLabel('id')
+      .onNodeDragEnd(node => {
+        node.fx = node.x;
+        node.fy = node.y;
+        node.fz = node.z;
+      })
+      .graphData(gData)
+
+
+    document.getElementById('zoom-btn').addEventListener('click', () => {
+      Graph.cameraPosition(
+        { x: 200, y: -232, z: 242 },
+        new THREE.Vector3(0, 0, 0),
+        4000  // ms transition duration
+      );
+
+    });
+
+    document.getElementById('one-route-btn').addEventListener('click', () => {
+      myFunc = particlesFunctions[3]
+      myFunc()
+    });
+
+    document.getElementById('multi-route-btn').addEventListener('click', () => {
+      myFunc = particlesFunctions[Math.floor(Math.random() * 4)]
+      myFunc()
+
+    });
+
+
+
+
+    const redParticle = (link) => {
+      Graph.linkDirectionalParticleColor(() => 'red').emitParticle(link)
+    }
+
+    const yellowParticle = (link) => {
+      Graph.linkDirectionalParticleColor(() => 'yellow').emitParticle(link)
+    }
+
+
+    const startParticles0 = () => {
+      redParticle(gData.links[0]);
+      setTimeout(redParticle, 2000, gData.links[1]);
+      setTimeout(redParticle, 4000, gData.links[2]);
+      setTimeout(redParticle, 6000, gData.links[3]);
+      setTimeout(redParticle, 8000, gData.links[4]);
+      setTimeout(redParticle, 10000, gData.links[5]);
+
+      setTimeout(yellowParticle, 12000, gData.links[17]);
+      setTimeout(yellowParticle, 14000, gData.links[16]);
+      setTimeout(yellowParticle, 16000, gData.links[15]);
+      setTimeout(yellowParticle, 18000, gData.links[14]);
+      setTimeout(yellowParticle, 20000, gData.links[13]);
+      setTimeout(yellowParticle, 22000, gData.links[12]);
+
+
+    }
+
+    const startParticles1 = () => {
+      redParticle(gData.links[0]);
+      setTimeout(redParticle, 2000, gData.links[6]);
+      setTimeout(redParticle, 4000, gData.links[7]);
+      setTimeout(redParticle, 6000, gData.links[3]);
+      setTimeout(redParticle, 8000, gData.links[4]);
+      setTimeout(redParticle, 10000, gData.links[5]);
+
+      setTimeout(yellowParticle, 12000, gData.links[17]);
+      setTimeout(yellowParticle, 14000, gData.links[16]);
+      setTimeout(yellowParticle, 16000, gData.links[15]);
+      setTimeout(yellowParticle, 18000, gData.links[19]);
+      setTimeout(yellowParticle, 20000, gData.links[18]);
+      setTimeout(yellowParticle, 22000, gData.links[12]);
+
+    }
+
+    const startParticles2 = () => {
+      redParticle(gData.links[0]);
+      setTimeout(redParticle, 2000, gData.links[8]);
+      setTimeout(redParticle, 4000, gData.links[3]);
+      setTimeout(redParticle, 6000, gData.links[4]);
+      setTimeout(redParticle, 8000, gData.links[5]);
+
+      setTimeout(yellowParticle, 10000, gData.links[17]);
+      setTimeout(yellowParticle, 12000, gData.links[16]);
+      setTimeout(yellowParticle, 14000, gData.links[15]);
+      setTimeout(yellowParticle, 16000, gData.links[20]);
+      setTimeout(yellowParticle, 18000, gData.links[12]);
+
+
+    }
+
+    const startParticles3 = () => {
+      redParticle(gData.links[0]);
+      setTimeout(redParticle, 2000, gData.links[1]);
+      setTimeout(redParticle, 4000, gData.links[2]);
+      setTimeout(redParticle, 8000, gData.links[9]);
+      setTimeout(redParticle, 10000, gData.links[10]);
+      setTimeout(redParticle, 12000, gData.links[11]);
+      setTimeout(redParticle, 14000, gData.links[5]);
+
+      setTimeout(yellowParticle, 16000, gData.links[17]);
+      setTimeout(yellowParticle, 18000, gData.links[23]);
+      setTimeout(yellowParticle, 20000, gData.links[22]);
+      setTimeout(yellowParticle, 22000, gData.links[21]);
+      setTimeout(yellowParticle, 24000, gData.links[14]);
+      setTimeout(yellowParticle, 26000, gData.links[13]);
+      setTimeout(yellowParticle, 28000, gData.links[12]);
+
+    }
+    const particlesFunctions = [
+      startParticles0,
+      startParticles1,
+      startParticles2,
+      startParticles3
+    ]
+
+  </script>
+</body>
